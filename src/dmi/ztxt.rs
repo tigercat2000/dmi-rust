@@ -182,34 +182,34 @@ impl TryFrom<chunk::RawGenericChunk> for RawZtxtChunk {
 
 /*
 impl TryFrom<Vec<u8>> for RawZtxtChunk {
-	type Error = anyhow::Error;
-	fn try_from(raw_chunk_bytes: Vec<u8>) -> Result<Self, Self::Error> {
-		let total_bytes_length = raw_chunk_bytes.len();
-		if total_bytes_length < 12 {
-			bail!("Failed to convert Vec<u8> into RawZtxtChunk. Size: {}. Minimum necessary is 12.", raw_chunk_bytes.len())
+		type Error = anyhow::Error;
+		fn try_from(raw_chunk_bytes: Vec<u8>) -> Result<Self, Self::Error> {
+				let total_bytes_length = raw_chunk_bytes.len();
+				if total_bytes_length < 12 {
+						bail!("Failed to convert Vec<u8> into RawZtxtChunk. Size: {}. Minimum necessary is 12.", raw_chunk_bytes.len())
+				}
+				let length = [raw_chunk_bytes[0], raw_chunk_bytes[1], raw_chunk_bytes[2], raw_chunk_bytes[3]];
+				if u32::from_be_bytes(length) != total_bytes_length as u32 - 12 {
+						bail!("Failed to convert Vec<u8> into RawZtxtChunk. Lengh field value ({}) does not match the actual data field size ({}).", u32::from_be_bytes(length), total_bytes_length -12)
+				}
+				let chunk_type = [raw_chunk_bytes[4], raw_chunk_bytes[5], raw_chunk_bytes[6], raw_chunk_bytes[7]];
+				if chunk_type != ZTXT_TYPE {
+						bail!("Failed to convert Vec<u8> into RawZtxtChunk. Chunk type is not zTXt: {:#?}. Should be {:#?}.", chunk_type, ZTXT_TYPE)
+				}
+				let data_bytes = &raw_chunk_bytes[8..(total_bytes_length - 4)];
+				let data = RawZtxtData::load(data_bytes)?;
+				let crc = [raw_chunk_bytes[total_bytes_length - 4], raw_chunk_bytes[total_bytes_length - 3], raw_chunk_bytes[total_bytes_length - 2], raw_chunk_bytes[total_bytes_length - 1]];
+				let calculated_crc = crc::calculate_crc(chunk_type.iter().chain(data_bytes.iter()));
+				if u32::from_be_bytes(crc) != calculated_crc {
+						bail!("Failed to convert Vec<u8> into RawZtxtChunk. Given CRC ({}) does not match the calculated one ({}).", u32::from_be_bytes(crc), calculated_crc)
+				}
+				Ok(RawZtxtChunk {
+						length,
+						chunk_type,
+						data,
+						crc,
+				})
 		}
-		let length = [raw_chunk_bytes[0], raw_chunk_bytes[1], raw_chunk_bytes[2], raw_chunk_bytes[3]];
-		if u32::from_be_bytes(length) != total_bytes_length as u32 - 12 {
-			bail!("Failed to convert Vec<u8> into RawZtxtChunk. Lengh field value ({}) does not match the actual data field size ({}).", u32::from_be_bytes(length), total_bytes_length -12)
-		}
-		let chunk_type = [raw_chunk_bytes[4], raw_chunk_bytes[5], raw_chunk_bytes[6], raw_chunk_bytes[7]];
-		if chunk_type != ZTXT_TYPE {
-			bail!("Failed to convert Vec<u8> into RawZtxtChunk. Chunk type is not zTXt: {:#?}. Should be {:#?}.", chunk_type, ZTXT_TYPE)
-		}
-		let data_bytes = &raw_chunk_bytes[8..(total_bytes_length - 4)];
-		let data = RawZtxtData::load(data_bytes)?;
-		let crc = [raw_chunk_bytes[total_bytes_length - 4], raw_chunk_bytes[total_bytes_length - 3], raw_chunk_bytes[total_bytes_length - 2], raw_chunk_bytes[total_bytes_length - 1]];
-		let calculated_crc = crc::calculate_crc(chunk_type.iter().chain(data_bytes.iter()));
-		if u32::from_be_bytes(crc) != calculated_crc {
-			bail!("Failed to convert Vec<u8> into RawZtxtChunk. Given CRC ({}) does not match the calculated one ({}).", u32::from_be_bytes(crc), calculated_crc)
-		}
-		Ok(RawZtxtChunk {
-			length,
-			chunk_type,
-			data,
-			crc,
-		})
-	}
 }
 */
 
